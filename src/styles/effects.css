@@ -1,0 +1,200 @@
+/* ---------------------------------------------------------------------------
+   CRT, film noise, vignette and the glitch vocabulary.
+   Everything here is decorative and sits behind pointer-events: none.
+--------------------------------------------------------------------------- */
+
+.fx {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 900;
+}
+
+/* Fine scanlines + a slow roll bar. */
+.fx-scan {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.035) 0px,
+    rgba(255, 255, 255, 0.035) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+  opacity: 0.55;
+}
+
+.fx-scan::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 18vh;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(255, 255, 255, 0.028),
+    transparent
+  );
+  animation: roll 9s linear infinite;
+}
+
+@keyframes roll {
+  from {
+    transform: translateY(-20vh);
+  }
+  to {
+    transform: translateY(120vh);
+  }
+}
+
+/* Grain. A single tiled turbulence texture, nudged each frame-step. */
+.fx-noise {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='160' height='160' filter='url(%23n)' opacity='0.5'/></svg>");
+  opacity: 0.045;
+  animation: grain 700ms steps(6) infinite;
+  will-change: transform;
+}
+
+@keyframes grain {
+  0% { transform: translate3d(0, 0, 0); }
+  20% { transform: translate3d(-4%, 2%, 0); }
+  40% { transform: translate3d(3%, -3%, 0); }
+  60% { transform: translate3d(-2%, -2%, 0); }
+  80% { transform: translate3d(2%, 3%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+/* Corner falloff so the panel feels like it sits inside a tube. */
+.fx-vignette {
+  background:
+    radial-gradient(120% 90% at 50% 45%, transparent 45%, rgba(0, 0, 0, 0.55) 100%),
+    radial-gradient(100% 70% at 50% 50%, transparent 60%, rgba(0, 0, 0, 0.4) 100%);
+}
+
+/* A barely-there horizontal chroma edge on the whole shell. */
+.fx-bloom {
+  background: radial-gradient(70% 45% at 50% 0%, rgba(233, 233, 236, 0.05), transparent 70%);
+}
+
+/* --- glitch states -------------------------------------------------------- */
+
+html[data-glitch] .shell {
+  will-change: transform, filter, opacity;
+}
+
+html[data-glitch='flicker'] .shell {
+  animation: flicker 140ms steps(2) 2;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.22; }
+}
+
+html[data-glitch='shift'] .shell {
+  animation: shift 180ms var(--ease-hard) 2;
+}
+
+@keyframes shift {
+  0% { transform: translate3d(0, 0, 0); }
+  30% { transform: translate3d(-6px, 1px, 0); filter: blur(0.3px); }
+  55% { transform: translate3d(5px, -2px, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+html[data-glitch='invert'] .shell {
+  filter: invert(1) hue-rotate(35deg);
+}
+
+html[data-glitch='vanish'] .glitch-target {
+  opacity: 0;
+  transform: translateY(-2px);
+}
+
+html[data-glitch='cursor'],
+html[data-glitch='cursor'] * {
+  cursor: none !important;
+}
+
+html[data-glitch='other'] .shell {
+  filter: contrast(1.35) saturate(0);
+  transform: scale(1.004);
+}
+
+/* Split-channel text used sparingly on headings. */
+.glitch-text {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+html[data-glitch='scramble'] .glitch-text::before,
+html[data-glitch='shift'] .glitch-text::before {
+  opacity: 0.75;
+  color: var(--red);
+  transform: translate3d(-2px, 0, 0);
+  clip-path: inset(0 0 55% 0);
+}
+
+html[data-glitch='scramble'] .glitch-text::after,
+html[data-glitch='shift'] .glitch-text::after {
+  opacity: 0.6;
+  color: #4fd1ff;
+  transform: translate3d(2px, 0, 0);
+  clip-path: inset(52% 0 0 0);
+}
+
+/* The wrong interface, flashed for a fraction of a second. */
+.fx-other {
+  position: fixed;
+  inset: 0;
+  z-index: 950;
+  background: var(--bg-sink);
+  color: var(--fg-dim);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  padding: 24px;
+  overflow: hidden;
+  pointer-events: none;
+  animation: otherIn 120ms var(--ease) both;
+}
+
+@keyframes otherIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fx-other pre {
+  margin: 0;
+  color: var(--fg-faint);
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.fx-other-head {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--red-dim);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-noise,
+  .fx-scan::after {
+    animation: none;
+  }
+  html[data-glitch] .shell {
+    animation: none !important;
+    filter: none !important;
+    transform: none !important;
+  }
+}

@@ -1,0 +1,140 @@
+/* ---------------------------------------------------------------------------
+   Tokens, reset and typography.
+   One surface colour, one accent, hairlines instead of boxes.
+--------------------------------------------------------------------------- */
+
+:root {
+  --bg: #050506;
+  --bg-raise: #0a0a0d;
+  --bg-sink: #030304;
+
+  --fg: #e9e9ec;
+  --fg-dim: rgba(233, 233, 236, 0.46);
+  --fg-faint: rgba(233, 233, 236, 0.22);
+  --fg-ghost: rgba(233, 233, 236, 0.09);
+
+  --line: rgba(233, 233, 236, 0.1);
+  --line-strong: rgba(233, 233, 236, 0.2);
+
+  --red: #e02326;
+  --red-dim: rgba(224, 35, 38, 0.55);
+  --red-ghost: rgba(224, 35, 38, 0.12);
+
+  --mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'IBM Plex Mono', Menlo, Consolas,
+    'Liberation Mono', monospace;
+
+  --step: 8px;
+  --rail: 1px;
+
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-hard: cubic-bezier(0.83, 0, 0.17, 1);
+
+  --shell: min(1080px, 100% - 2 * var(--gutter));
+  --gutter: 24px;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+html {
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.55;
+  letter-spacing: 0.01em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  overscroll-behavior: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+input {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+::selection {
+  background: var(--red);
+  color: #fff;
+}
+
+:focus-visible {
+  outline: 1px solid var(--fg-dim);
+  outline-offset: 3px;
+}
+
+/* --- shared type ---------------------------------------------------------- */
+
+.mono-label {
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+}
+
+.sys {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--fg-dim);
+}
+
+.accent {
+  color: var(--red);
+}
+
+.hairline {
+  height: var(--rail);
+  width: 100%;
+  background: var(--line);
+}
+
+/* Screen-reader-only helper for the few places that need a real label. */
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  :root {
+    --gutter: 16px;
+  }
+  body {
+    font-size: 13px;
+  }
+}
