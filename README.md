@@ -22,6 +22,22 @@ other device permission — every "observation" the interface makes is derived
 from data the page itself generated about the current and previous sessions,
 held in `localStorage` under the key `impossible.sys`.
 
+## Deployment
+
+Pushing to the default branch builds the site and publishes it to GitHub Pages
+via `.github/workflows/pages.yml`. The workflow injects `VITE_BASE=/<repo>/` so
+the bundle resolves its assets under the project-site subpath; local dev and
+`npm run preview` stay at the root.
+
+Enable it once under **Settings -> Pages -> Build and deployment -> Source:
+GitHub Actions**.
+
+To build for a subpath by hand:
+
+```bash
+VITE_BASE=/imposibleweb/ npm run build
+```
+
 ## Architecture
 
 ```
