@@ -29,8 +29,9 @@ via `.github/workflows/pages.yml`. The workflow injects `VITE_BASE=/<repo>/` so
 the bundle resolves its assets under the project-site subpath; local dev and
 `npm run preview` stay at the root.
 
-Enable it once under **Settings -> Pages -> Build and deployment -> Source:
-GitHub Actions**.
+The workflow passes `enablement: true` to `actions/configure-pages`, so the
+first run turns Pages on for the repository by itself; no manual trip through
+repository settings is needed.
 
 To build for a subpath by hand:
 
